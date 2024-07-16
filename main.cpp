@@ -34,9 +34,10 @@ int* RayCollisionDetection(int rayDestination[])
     _rayStep[0] = (rayDestination[0] - playerPosition[0]) * 1.0 / renderDistance;
     _rayStep[1] = (rayDestination[1] - playerPosition[1]) * 1.0 / renderDistance;
     
-    static int _rayPosition[2];
+    static int _rayPosition[3];
     _rayPosition[0] = -1;
     _rayPosition[1] = -1;
+    _rayPosition[3] = 0; // Ray distance
     for (int i = 0; i < renderDistance; i++)
     {
         _rayPosition[0] = playerPosition[0] + (int)(_rayStep[0] * i);
@@ -52,6 +53,7 @@ int* RayCollisionDetection(int rayDestination[])
                 break;
             }
         }
+        _rayPosition[3]++;
     }
     return _rayPosition;
     
@@ -105,7 +107,7 @@ int main()
     cout << "Ray destination at angle " << _angle << " is " << _rayDestination[0] << ", " << _rayDestination[1] << endl;
 
     int* _rayPosition = RayCollisionDetection(_rayDestination);
-    cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1];
+    cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1] << ". The ray has travelled " << _rayPosition[3] << " m";
 
     return 0;
 }
