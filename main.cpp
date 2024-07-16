@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 // Public variables init
@@ -15,10 +16,16 @@ string map[] = {
     "##########"
 };
 int* playerCoords;
+int displayResolution[2] = {32, 18};
+int FOV = 120;
+int renderDistance = 5;
 
-int* DegreesToDestination(/* int playerX, int playerY, int degree, int renderDistance */)
+int* AngleToRayDestination(int angle)
 {
-
+    static int _rayDestination[2];
+    _rayDestination[0] = playerCoords[0] + cos(angle) * renderDistance;
+    _rayDestination[1] = playerCoords[1] + sin(angle) * renderDistance;
+    return _rayDestination;
 }
 
 int RayCollisionDetection(/* int destinationX, int destinationY */)
@@ -59,6 +66,7 @@ int main()
     playerCoords = GetPlayerPosition();
     cout << "Player position: " << playerCoords[0] << ", " << playerCoords[1] << endl;
 
+    
 
     return 0;
 }
