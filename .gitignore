@@ -1,2 +1,4 @@
 .vscode
 commit.sh
+compile.sh
+main.exe
