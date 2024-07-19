@@ -1,5 +1,5 @@
 # Pseudo3DShooter
-A simple pseudo 3D shooter with console graphics made in c++
+A simple pseudo 3D shooter made in c++
 
 # Table of contents
 * [How to install](#how-to-install)

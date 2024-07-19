@@ -1,4 +1,5 @@
 .vscode
 commit.sh
 compile.sh
+backup.sh
 main.exe
