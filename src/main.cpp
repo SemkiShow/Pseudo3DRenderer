@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -19,6 +20,7 @@ int main()
 {
     // Local variables init
     RenderWindow window(VideoMode(windowSize[0], windowSize[1]), "Pseudo3DShooter");
+    glEnable(GL_TEXTURE_2D);
     if (verticalSync)
     {
         window.setFramerateLimit(144);
@@ -36,7 +38,7 @@ int main()
     // rectangle.setFillColor(Color(34, 165, 241));
 
     Font font;
-    font.loadFromFile("./JetBrainsMonoNerdFont-Medium.ttf");
+    font.loadFromFile("../JetBrainsMonoNerdFont-Medium.ttf");
     Text FPS;
     FPS.setFont(font);
     FPS.setString(to_string(123));
@@ -44,7 +46,7 @@ int main()
 
     vector<string> _mapVector;
     string mapFileName = "map2";
-    fstream mapFile("maps/" + mapFileName + ".txt");
+    fstream mapFile("../maps/" + mapFileName + ".txt");
     string mapFileContent;
     while (getline(mapFile, mapFileContent))
     {
@@ -53,7 +55,7 @@ int main()
     }
     mapFile.close();
     int _mapSize = _mapVector.size();
-    string _map[_mapSize];
+    string* _map = new string[_mapSize];
     for (int i = 0; i < _mapSize; i++)
     {
         _map[i] = _mapVector[i];
@@ -105,8 +107,7 @@ int main()
     cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1] << ". The ray has travelled " << _rayPosition[3] << " m" << endl;
 
     // float* _output = new float[windowSize[0]];
-    vector<float> _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
-    // _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
+    float* _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
     for (int i = 0; i < windowSize[0]; i++)
     {
         cout << _output[i] << "; ";
@@ -134,13 +135,13 @@ int main()
 
         window.clear();
 
-        _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
-        for (int i = 0; i < windowSize[0]; i++)
-        {
-            rectangle.setSize(Vector2f(1, _output[i] * windowSize[1]));
-            rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
-            window.draw(rectangle);
-        }
+        // _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
+        // for (int i = 0; i < windowSize[0]; i++)
+        // {
+        //     rectangle.setSize(Vector2f(1, _output[i] * windowSize[1]));
+        //     rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
+        //     window.draw(rectangle);
+        // }
 
         if (time(NULL) - FPSCounter >= 1)
         {

@@ -6,24 +6,24 @@ int renderDistance = 5;
 
 float DegreesToRadians(float _degrees)
 {
-    return _degrees * (3.141592654 / 180);
+    return _degrees * (3.141592654f / 180);
 }
 
 int* AngleToRayDestination(float _angle, int* _playerPosition)
 {
-    static int _rayDestination[2];
-    _rayDestination[0] = _playerPosition[0] + (int)(cosf(DegreesToRadians(_angle)) * renderDistance);
-    _rayDestination[1] = _playerPosition[1] + (int)(sinf(DegreesToRadians(_angle)) * renderDistance);
+    int* _rayDestination = new int[2];
+    _rayDestination[0] = _playerPosition[0] + (int)(cos(DegreesToRadians(_angle)) * renderDistance);
+    _rayDestination[1] = _playerPosition[1] + (int)(sin(DegreesToRadians(_angle)) * renderDistance);
     return _rayDestination;
 }
 
 int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int* _playerPosition)
 {
-    float _rayStep[2];
-    _rayStep[0] = (_rayDestination[0] - _playerPosition[0]) * 1.0 / renderDistance;
-    _rayStep[1] = (_rayDestination[1] - _playerPosition[1]) * 1.0 / renderDistance;
+    float* _rayStep = new float[2];
+    _rayStep[0] = (_rayDestination[0] - _playerPosition[0]) * 1.0f / renderDistance;
+    _rayStep[1] = (_rayDestination[1] - _playerPosition[1]) * 1.0f / renderDistance;
     
-    static int _rayPosition[3];
+    int* _rayPosition = new int[3];
     _rayPosition[0] = 0;
     _rayPosition[1] = 0;
     _rayPosition[3] = 0; // Ray distance
@@ -34,8 +34,8 @@ int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int
         // cout << _map[_rayPosition[1]][_rayPosition[0]] << "; ";
         if (_rayPosition[0] < 0 | _rayPosition[0] > _map[0].length() | _rayPosition[1] < 0 | _rayPosition[1] > _mapSize)
         {
-            // _rayPosition[3] = renderDistance;
-            // break;
+            _rayPosition[3] = renderDistance;
+            break;
         }
         else
         {
@@ -47,7 +47,6 @@ int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int
         _rayPosition[3]++;
     }
     return _rayPosition;
-    
 }
 
 int* GetPlayerPosition(string* _map, int _mapSize)
@@ -77,17 +76,14 @@ int* GetPlayerPosition(string* _map, int _mapSize)
     return _playerPosition;
 }
 
-vector<float> RenderFrame(string* _map, int _mapSize, int* _windowSize, int* _playerPosition)
+float* RenderFrame(string* _map, int _mapSize, int* _windowSize, int* _playerPosition)
 {
     // char (*_output)[_windowSize[0]] = new char[_windowSize[0]][_windowSize[1]];
-    vector<float> _output(_windowSize[0], 0.5f);
-    /* for (int y = 0; y < _windowSize[1]; y++)
+    float* _output = new float[_windowSize[0]];
+    for (int i = 0; i < _windowSize[0]; i++)
     {
-        for (int x = 0; x < _windowSize[0]; x++)
-        {
-            _output[y][x] = dist9(rng) + 48;
-        }
-    } */
+        _output[i] = 0.5f;
+    }
     float _rayAngleStep = FOV * 1.f / _windowSize[0];
     int* _rayPosition;
     // cout << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]);
@@ -104,5 +100,3 @@ vector<float> RenderFrame(string* _map, int _mapSize, int* _windowSize, int* _pl
 
     return _output;
 }
-
-

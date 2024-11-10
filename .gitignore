@@ -1,8 +1,7 @@
 commit.sh
-compile.sh
 backup.sh
 main.exe
-build
+build/*
 out
 .cache
 .idea
