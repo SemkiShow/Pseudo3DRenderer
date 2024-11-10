@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
+// #include <SFML/OpenGL.hpp>
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -20,7 +20,7 @@ int main()
 {
     // Local variables init
     RenderWindow window(VideoMode(windowSize[0], windowSize[1]), "Pseudo3DShooter");
-    glEnable(GL_TEXTURE_2D);
+    // glEnable(GL_TEXTURE_2D);
     if (verticalSync)
     {
         window.setFramerateLimit(144);
@@ -43,6 +43,10 @@ int main()
     FPS.setFont(font);
     FPS.setString(to_string(123));
     FPS.setCharacterSize(24);
+    Text FOVtext;
+    FOVtext.setPosition(0, 25);
+    FOVtext.setFont(font);
+    FOVtext.setCharacterSize(24);
 
     vector<string> _mapVector;
     string mapFileName = "map2";
@@ -106,13 +110,13 @@ int main()
     int* _rayPosition = RayCollisionDetection(_rayDestination, _map, _mapSize, playerPosition);
     cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1] << ". The ray has travelled " << _rayPosition[3] << " m" << endl;
 
-    // float* _output = new float[windowSize[0]];
-    float* _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
-    for (int i = 0; i < windowSize[0]; i++)
-    {
-        cout << _output[i] << "; ";
-    }
-    cout << endl;
+    // double* _output = new double[windowSize[0]];
+    double* _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
+    // for (int i = 0; i < windowSize[0]; i++)
+    // {
+    //     cout << _output[i] << "; ";
+    // }
+    // cout << endl;
 
     cout << "</Debug info>" << endl;
 
@@ -135,20 +139,23 @@ int main()
 
         window.clear();
 
-        // _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
-        // for (int i = 0; i < windowSize[0]; i++)
-        // {
-        //     rectangle.setSize(Vector2f(1, _output[i] * windowSize[1]));
-        //     rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
-        //     window.draw(rectangle);
-        // }
+        _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
+        for (int i = 0; i < windowSize[0]; i++)
+        {
+            rectangle.setSize(Vector2f(1, _output[i] * windowSize[1]));
+            rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
+            window.draw(rectangle);
+        }
 
         if (time(NULL) - FPSCounter >= 1)
         {
-            FPS.setString(to_string((int)(1 / clock.getElapsedTime().asSeconds())));
+            FPS.setString("FPS: " + to_string((int)(1 / clock.getElapsedTime().asSeconds())));
             time(&FPSCounter);
+            FOV+=10;
+            FOVtext.setString("FOV: " + to_string(FOV));
         }
         window.draw(FPS);
+        window.draw(FOVtext);
 
         window.display();
         // clock.restart();
