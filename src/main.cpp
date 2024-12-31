@@ -151,7 +151,7 @@ int main()
         {
             FPS.setString("FPS: " + to_string((int)(1 / clock.getElapsedTime().asSeconds())));
             time(&FPSCounter);
-            FOV+=10;
+            // FOV+=5;
             FOVtext.setString("FOV: " + to_string(FOV));
         }
         window.draw(FPS);
