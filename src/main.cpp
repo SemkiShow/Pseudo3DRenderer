@@ -73,7 +73,7 @@ int main()
     // rectangle.setFillColor(Color(34, 165, 241));
 
     sf::Font font;
-    font.loadFromFile("../JetBrainsMonoNerdFont-Medium.ttf");
+    font.loadFromFile("./JetBrainsMonoNerdFont-Medium.ttf");
     sf::Text FPS;
     FPS.setFont(font);
     FPS.setString(std::to_string(123));
@@ -83,8 +83,8 @@ int main()
     FOVtext.setFont(font);
     FOVtext.setCharacterSize(24);
 
-    std::string mapFileName = "map4";
-    std::fstream mapFile("../maps/" + mapFileName + ".txt");
+    std::string mapFileName = "map2";
+    std::fstream mapFile("./maps/" + mapFileName + ".txt");
     std::string mapFileContent;
     while (getline(mapFile, mapFileContent))
     {

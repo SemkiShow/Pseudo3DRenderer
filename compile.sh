@@ -1,13 +1,13 @@
 #!/bin/bash
-# Example
-# cmake -B build -DCMAKE_BUILD_TYPE=Release
-# cmake --build build --config Release
-# ./build/bin/main
+# Release
+cmake -B build -DCMAKE_BUILD_TYPE=Release &&
+cmake --build build --config Release &&
+./build/bin/main
 
 # Release
-cd build
-cmake .. && make && ./bin/main
-cd ..
+# cd build
+# cmake .. && make && ./bin/main
+# cd ..
 
 # Release
 # cd build
