@@ -5,11 +5,11 @@
 # ./build/bin/main
 
 # Release
-# cd build
-# cmake .. && make && ./bin/main
-# cd ..
+cd build
+cmake .. && make && ./bin/main
+cd ..
 
 # Release
-cd build
-g++ -c -g ../src/*.cpp && g++ *.o -g -o main -lsfml-graphics -lsfml-window -lsfml-system && ./main
-cd ..
+# cd build
+# g++ -c -g ../src/*.cpp && g++ *.o -g -o main -lsfml-graphics -lsfml-window -lsfml-system && ./main
+# cd ..
