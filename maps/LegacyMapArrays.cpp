@@ -1,4 +1,4 @@
-string map1[] = {
+std::string map1[] = {
     "##########",
     "#   #     ",
     "# ### ####",
@@ -10,14 +10,14 @@ string map1[] = {
     "P #    # #",
     "##########"
 };
-string map2[] = {
+std::string map2[] = {
     "   #",
     "    ",
     "P  #",
     "    ",
     "   #"
 };
-string map3[] = {
+std::string map3[] = {
     "     #######   ",
     "    #    ## #  ",
     "   #   #     # ",
@@ -38,7 +38,7 @@ string map3[] = {
     "   #   # #   # ",
     "    ###   ###  "
 };
-string map4[] = {
+std::string map4[] = {
     "     #######   ",
     "    #       #  ",
     "   #         # ",

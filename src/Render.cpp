@@ -17,7 +17,7 @@ int* AngleToRayDestination(double _angle, int* _playerPosition)
     return _rayDestination;
 }
 
-int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int* _playerPosition)
+int* RayCollisionDetection(int* _rayDestination, std::string* _map, int _mapSize, int* _playerPosition)
 {
     double* _rayStep = new double[2];
     _rayStep[0] = (_rayDestination[0] - _playerPosition[0]) * 1.0 / renderDistance;
@@ -31,7 +31,7 @@ int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int
     {
         _rayPosition[0] = _playerPosition[0] + (int)(_rayStep[0] * i);
         _rayPosition[1] = _playerPosition[1] + (int)(_rayStep[1] * i);
-        // cout << _map[_rayPosition[1]][_rayPosition[0]] << "; ";
+        // std::cout << _map[_rayPosition[1]][_rayPosition[0]] << "; ";
         if (_rayPosition[0] < 0 | _rayPosition[0] >= _map[0].length() | _rayPosition[1] < 0 | _rayPosition[1] >= _mapSize)
         {
             _rayPosition[3] = renderDistance;
@@ -49,16 +49,16 @@ int* RayCollisionDetection(int* _rayDestination, string* _map, int _mapSize, int
     return _rayPosition;
 }
 
-int* GetPlayerPosition(string* _map, int _mapSize)
+int* GetPlayerPosition(std::string* _map, int _mapSize)
 {
     static int _playerPosition[2] = {-1, -2};
-    cout << "The map size is " << _mapSize/* (sizeof(_map) / sizeof(_map[0])) */ << ", " << _map[0].length() << endl;
+    std::cout << "The map size is " << _mapSize << ", " << _map[0].length() << std::endl;
     
     for (int y = 0; y < _mapSize; y++)
     {
         for (int x = 0; x < _map[y].length(); x++)
         {
-            cout << _map[y][x];
+            std::cout << _map[y][x];
             if (_map[y][x] == 'P')
             {
                 _playerPosition[0] = x;
@@ -67,18 +67,13 @@ int* GetPlayerPosition(string* _map, int _mapSize)
             }
             
         }
-        /* if (_playerPosition[0] != -1)
-        {
-            break;
-        } */
-        cout << endl;
+        std::cout << std::endl;
     }
     return _playerPosition;
 }
 
-double* RenderFrame(string* _map, int _mapSize, int* _windowSize, int* _playerPosition)
+double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, int* _playerPosition)
 {
-    // char (*_output)[_windowSize[0]] = new char[_windowSize[0]][_windowSize[1]];
     double* _output = new double[_windowSize[0]];
     for (int i = 0; i < _windowSize[0]; i++)
     {
@@ -86,17 +81,17 @@ double* RenderFrame(string* _map, int _mapSize, int* _windowSize, int* _playerPo
     }
     double _rayAngleStep = FOV * 1.0 / _windowSize[0];
     int* _rayPosition;
-    // cout << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]);
+    // std::cout << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]);
     
-    // cout << "Ray angle, Ray distance, Column height, Symbol index, Symbol" << endl;
+    // std::cout << "Ray angle, Ray distance, Column height, Symbol index, Symbol" << std::endl;
     for (int i = 0; i < _windowSize[0]; i++)
     {
         _rayPosition = RayCollisionDetection(AngleToRayDestination(_rayAngleStep * i, _playerPosition), _map, _mapSize, _playerPosition);
-        // cout << (int)(_rayAngleStep * i) << " deg, " << _rayPosition[3] << ", " << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]) << ", " << (int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1)) << ", " << brightness[(int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1))] << "; ";
+        // std::cout << (int)(_rayAngleStep * i) << " deg, " << _rayPosition[3] << ", " << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]) << ", " << (int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1)) << ", " << brightness[(int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1))] << "; ";
         _output[i] = 1 - _rayPosition[3] * 1.0 / renderDistance;
-        // cout << endl;
+        // std::cout << std::endl;
     }
-    // cout << endl;
+    // std::cout << std::endl;
 
     return _output;
 }
