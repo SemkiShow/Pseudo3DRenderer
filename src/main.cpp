@@ -11,7 +11,7 @@ int windowSize[2] = {16*32*2, 9*32*2};
 int verticalSync = true;
 
 // Game data
-int* playerPosition;
+double* playerPosition;
 std::vector<std::string> _mapVector;
 std::string* _map;
 int _mapSize;
@@ -53,6 +53,47 @@ int PrintDebugInfo()
 
 int main()
 {
+
+    std::cout << "Enter the map ID" << std::endl;
+    std::string mapID;
+    std::getline(std::cin, mapID);
+    std::fstream mapFile("./maps/map" + mapID + ".txt");
+    std::string mapFileContent;
+    while (getline(mapFile, mapFileContent))
+    {
+        // std::cout << mapFileContent << std::endl;
+        _mapVector.push_back(mapFileContent);
+    }
+    std::string buf;
+    for (int i = 0; i < _mapVector.size(); i++)
+    {
+        buf = "";
+        for (int j = 0; j < _mapVector[0].size(); j++)
+        {
+            // std::cout << _mapVector[i][j];
+            for (int k = 0; k < scale; k++)
+            {
+                buf += _mapVector[i][j];
+            }
+        }
+        // std::cout << std::endl;
+        _mapVector[i] = buf;
+        for (int k = 0; k <= scale; k++)
+        {
+            _mapVector.insert(_mapVector.begin() + i + 1, buf);
+            i++;            
+        }
+    }
+    mapFile.close();
+    _mapSize = _mapVector.size();
+    _map = new std::string[_mapSize];
+    for (int i = 0; i < _mapSize; i++)
+    {
+        _map[i] = _mapVector[i];
+    }
+
+    PrintDebugInfo();
+
     // Local variables init
     sf::RenderWindow window(sf::VideoMode(windowSize[0], windowSize[1]), "Pseudo3DShooter");
     // glEnable(GL_TEXTURE_2D);
@@ -83,24 +124,6 @@ int main()
     FOVtext.setFont(font);
     FOVtext.setCharacterSize(24);
 
-    std::string mapFileName = "map2";
-    std::fstream mapFile("./maps/" + mapFileName + ".txt");
-    std::string mapFileContent;
-    while (getline(mapFile, mapFileContent))
-    {
-        // std::cout << mapFileContent << std::endl;
-        _mapVector.push_back(mapFileContent);
-    }
-    mapFile.close();
-    _mapSize = _mapVector.size();
-    _map = new std::string[_mapSize];
-    for (int i = 0; i < _mapSize; i++)
-    {
-        _map[i] = _mapVector[i];
-    }
-
-    PrintDebugInfo();
-
     time_t FPSCounter;
     time(&FPSCounter);
     sf::Clock clock;
@@ -120,30 +143,76 @@ int main()
             }
         }
 
-        // if (sf::Mouse::getPosition().x != 100)
-        // {
-        //     rotationXOffset += sf::Mouse::getPosition().x * sensitivity;
-        //     if (rotationXOffset >= 360) rotationXOffset = 0;
-        //     // std::cout << sf::Mouse::getPosition().x << ", ";
-        //     sf::Mouse::setPosition(sf::Vector2i(100, 100));
-        // }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
-            rotationXOffset -= sensitivity * deltaTime;
+            rotationXOffset -= rotationSensitivity * deltaTime;
+            if (rotationXOffset >= 360) rotationXOffset = 0;
+            if (rotationXOffset <= -360) rotationXOffset = 0;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            rotationXOffset += rotationSensitivity * deltaTime;
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
-            rotationXOffset += sensitivity * deltaTime;
+            playerPosition[0] += cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
+            {
+                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+            }
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
+            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
+            {
+                playerPosition[0] += cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+            }
+            if (rotationXOffset >= 360) rotationXOffset = 0;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime;
+            playerPosition[1] -= sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime;
+            if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
+            {
+                playerPosition[0] += cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] += sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime * 2;
+            }
+            if (rotationXOffset >= 360) rotationXOffset = 0;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            playerPosition[0] += cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime;
+            playerPosition[1] += sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime;
+            if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
+            {
+                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] -= sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime * 2;
+            }
+            if (rotationXOffset >= 360) rotationXOffset = 0;
+        }
+
 
         window.clear();
 
         _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
         for (int i = 0; i < windowSize[0]; i++)
         {
-            rectangle.setSize(sf::Vector2f(1, _output[i] * windowSize[1]));
+            double wallSize = _output[i] * windowSize[1] - (windowSize[1] - _output[i] * windowSize[1]);
+            rectangle.setSize(sf::Vector2f(1, wallSize > 0 ? wallSize : 0));
+            rectangle.setFillColor(sf::Color(pow(_output[i], 3) * 255, pow(_output[i], 3) * 255, pow(_output[i], 3) * 255));
             rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
             window.draw(rectangle);
         }
@@ -152,8 +221,7 @@ int main()
         {
             FPS.setString("FPS: " + std::to_string((int)(1 / clock.getElapsedTime().asSeconds())));
             time(&FPSCounter);
-            // FOV+=5;
-            FOVtext.setString("FOV: " + std::to_string(FOV));
+            // FOVtext.setString("Rotation: " + std::to_string(rotationXOffset));
         }
         window.draw(FPS);
         window.draw(FOVtext);

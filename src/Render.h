@@ -11,10 +11,12 @@
 
 extern int FOV;
 extern double rotationXOffset;
-extern double sensitivity;
+extern double rotationSensitivity;
+extern double movementSensitivity;
+extern int scale;
 
 double DegreesToRadians(double _degrees);
-int* AngleToRayDestination(double _angle, int* _playerPosition);
-int* RayCollisionDetection(int* _rayDestination, std::string* _map, int _mapSize, int* _playerPosition);
-int* GetPlayerPosition(std::string* _map, int _mapSize);
-double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, int* _playerPosition);
+int* AngleToRayDestination(double _angle, double* _playerPosition);
+int* RayCollisionDetection(int* _rayDestination, std::string* _map, int _mapSize, double* _playerPosition);
+double* GetPlayerPosition(std::string* _map, int _mapSize);
+double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, double* _playerPosition);
