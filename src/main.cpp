@@ -4,11 +4,52 @@
 #include <fstream>
 
 // Public variables init
+// Rendering data
 // std::string brightness = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 // std::string brightness = "#";
-int* playerPosition;
 int windowSize[2] = {16*32*2, 9*32*2};
 int verticalSync = true;
+
+// Game data
+int* playerPosition;
+std::vector<std::string> _mapVector;
+std::string* _map;
+int _mapSize;
+
+int PrintDebugInfo()
+{
+    // Debug info
+    std::cout << "<Debug info>" << std::endl;
+
+    std::cout << "Window size is " << windowSize[0] << ", " << windowSize[1] << std::endl;
+
+    playerPosition = GetPlayerPosition(_map, _mapSize);
+    // std::cout << _map[0].length() << std::endl;
+    std::cout << "Player position: " << playerPosition[0] << ", " << playerPosition[1] << std::endl;
+    
+    int _angle;
+    bool _askForAngle = false;
+    if (_askForAngle)
+    {
+        std::cout << "Enter angle: ";
+        std::cin >> _angle;
+    }
+    else
+    {
+        _angle = 42.0; // Veritasium angle
+    }
+    int* _rayDestination = AngleToRayDestination(_angle, playerPosition);
+    std::cout << "Ray destination at angle " << _angle << " is " << _rayDestination[0] << ", " << _rayDestination[1] << std::endl;
+
+    int* _rayPosition = RayCollisionDetection(_rayDestination, _map, _mapSize, playerPosition);
+    std::cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1] << ". The ray has travelled " << _rayPosition[3] << " m" << std::endl;
+
+    double* _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
+
+    std::cout << "</Debug info>" << std::endl;
+
+    return 0;
+}
 
 int main()
 {
@@ -42,8 +83,7 @@ int main()
     FOVtext.setFont(font);
     FOVtext.setCharacterSize(24);
 
-    std::vector<std::string> _mapVector;
-    std::string mapFileName = "map2";
+    std::string mapFileName = "map4";
     std::fstream mapFile("../maps/" + mapFileName + ".txt");
     std::string mapFileContent;
     while (getline(mapFile, mapFileContent))
@@ -52,76 +92,25 @@ int main()
         _mapVector.push_back(mapFileContent);
     }
     mapFile.close();
-    int _mapSize = _mapVector.size();
-    std::string* _map = new std::string[_mapSize];
+    _mapSize = _mapVector.size();
+    _map = new std::string[_mapSize];
     for (int i = 0; i < _mapSize; i++)
     {
         _map[i] = _mapVector[i];
     }
-    
-    // std::cout << mapFileContent << std::endl;
 
-    // std::string* _map = new std::string[sizeof(map2) / sizeof(*map2)];
-    // char (*_map)[sizeof(map2) / sizeof(*map2)] = new char[sizeof(map2) / sizeof(*map2)][map2[0].length()];
-    // for (int i = 0; i < sizeof(map2) / sizeof(*map2); i++)
-    // {
-    //     for (int j = 0; j < map2[i].length(); j++)
-    //     {
-    //         _map[i][j] = map2[i][j];
-    //     }
-    // }
-    // int _mapSize = sizeof(map2) / sizeof(*map2);
-
-    int _render;
-
-    // Debug info
-    std::cout << "<Debug info>" << std::endl;
-
-    // std::cout << brightness << std::endl;
-    // std::cout << 3.141592654 << std::endl;  
-
-    // GetTerminalSize(windowSize[0], windowSize[1]);
-    std::cout << "Window size is " << windowSize[0] << ", " << windowSize[1] << std::endl;
-
-    playerPosition = GetPlayerPosition(_map, _mapSize);
-    // std::cout << _map[0].length() << std::endl;
-    std::cout << "Player position: " << playerPosition[0] << ", " << playerPosition[1] << std::endl;
-    
-    int _angle;
-    bool _askForAngle = false;
-    if (_askForAngle)
-    {
-        std::cout << "Enter angle: ";
-        std::cin >> _angle;
-    }
-    else
-    {
-        _angle = 42.0; // Veritasium angle
-    }
-    int* _rayDestination = AngleToRayDestination(_angle, playerPosition);
-    std::cout << "Ray destination at angle " << _angle << " is " << _rayDestination[0] << ", " << _rayDestination[1] << std::endl;
-
-    int* _rayPosition = RayCollisionDetection(_rayDestination, _map, _mapSize, playerPosition);
-    std::cout << "Ray position is " << _rayPosition[0] << ", " << _rayPosition[1] << ". The ray has travelled " << _rayPosition[3] << " m" << std::endl;
-
-    // double* _output = new double[windowSize[0]];
-    double* _output = RenderFrame(_map, _mapSize, windowSize, playerPosition);
-    // for (int i = 0; i < windowSize[0]; i++)
-    // {
-    //     std::cout << _output[i] << "; ";
-    // }
-    // std::cout << std::endl;
-
-    std::cout << "</Debug info>" << std::endl;
+    PrintDebugInfo();
 
     time_t FPSCounter;
     time(&FPSCounter);
     sf::Clock clock;
+    double* _output;
+    double deltaTime;
 
     // Main loop
     while (window.isOpen())
     {
-        clock.restart();
+        deltaTime = clock.restart().asSeconds();
 
         for (auto event = sf::Event{}; window.pollEvent(event);)
         {
@@ -129,6 +118,24 @@ int main()
             {
                 window.close();
             }
+        }
+
+        // if (sf::Mouse::getPosition().x != 100)
+        // {
+        //     rotationXOffset += sf::Mouse::getPosition().x * sensitivity;
+        //     if (rotationXOffset >= 360) rotationXOffset = 0;
+        //     // std::cout << sf::Mouse::getPosition().x << ", ";
+        //     sf::Mouse::setPosition(sf::Vector2i(100, 100));
+        // }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            rotationXOffset -= sensitivity * deltaTime;
+            if (rotationXOffset >= 360) rotationXOffset = 0;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            rotationXOffset += sensitivity * deltaTime;
+            if (rotationXOffset >= 360) rotationXOffset = 0;
         }
 
         window.clear();
@@ -141,7 +148,7 @@ int main()
             window.draw(rectangle);
         }
 
-        if (time(NULL) - FPSCounter >= 1)
+        if (time(0) - FPSCounter >= 1)
         {
             FPS.setString("FPS: " + std::to_string((int)(1 / clock.getElapsedTime().asSeconds())));
             time(&FPSCounter);

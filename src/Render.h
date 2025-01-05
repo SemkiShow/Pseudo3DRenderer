@@ -10,6 +10,8 @@
 // using namespace std;
 
 extern int FOV;
+extern double rotationXOffset;
+extern double sensitivity;
 
 double DegreesToRadians(double _degrees);
 int* AngleToRayDestination(double _angle, int* _playerPosition);

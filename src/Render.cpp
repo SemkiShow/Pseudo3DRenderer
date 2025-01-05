@@ -1,8 +1,10 @@
 #include "Render.h"
 
 // Public variables init
-int FOV = 360;
-int renderDistance = 5;
+int FOV = 90;
+double rotationXOffset = 0;
+double sensitivity = 200;
+int renderDistance = 100;
 
 double DegreesToRadians(double _degrees)
 {
@@ -86,7 +88,7 @@ double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, int* _pla
     // std::cout << "Ray angle, Ray distance, Column height, Symbol index, Symbol" << std::endl;
     for (int i = 0; i < _windowSize[0]; i++)
     {
-        _rayPosition = RayCollisionDetection(AngleToRayDestination(_rayAngleStep * i, _playerPosition), _map, _mapSize, _playerPosition);
+        _rayPosition = RayCollisionDetection(AngleToRayDestination(_rayAngleStep * i + rotationXOffset, _playerPosition), _map, _mapSize, _playerPosition);
         // std::cout << (int)(_rayAngleStep * i) << " deg, " << _rayPosition[3] << ", " << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]) << ", " << (int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1)) << ", " << brightness[(int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1))] << "; ";
         _output[i] = 1 - _rayPosition[3] * 1.0 / renderDistance;
         // std::cout << std::endl;
