@@ -23,7 +23,6 @@ int PrintDebugInfo()
 
     std::cout << "Window size is " << windowSize[0] << ", " << windowSize[1] << std::endl;
 
-    playerPosition = GetPlayerPosition(_map, _mapSize);
     // std::cout << _map[0].length() << std::endl;
     std::cout << "Player position: " << playerPosition[0] << ", " << playerPosition[1] << std::endl;
     
@@ -92,10 +91,11 @@ int main()
         _map[i] = _mapVector[i];
     }
 
-    PrintDebugInfo();
+    playerPosition = GetPlayerPosition(_map, _mapSize);
+    // PrintDebugInfo();
 
     // Local variables init
-    sf::RenderWindow window(sf::VideoMode(windowSize[0], windowSize[1]), "Pseudo3DShooter");
+    sf::RenderWindow window(sf::VideoMode({windowSize[0], windowSize[1]}), "Pseudo3DShooter");
     // glEnable(GL_TEXTURE_2D);
     if (verticalSync)
     {
@@ -113,93 +113,93 @@ int main()
     rectangle.setFillColor(sf::Color(0, 132, 208));
     // rectangle.setFillColor(Color(34, 165, 241));
 
-    sf::Font font;
-    font.loadFromFile("./JetBrainsMonoNerdFont-Medium.ttf");
-    sf::Text FPS;
+    sf::Font font("./JetBrainsMonoNerdFont-Medium.ttf");
+    sf::Text FPS(font);
     FPS.setFont(font);
     FPS.setString(std::to_string(123));
     FPS.setCharacterSize(24);
-    sf::Text FOVtext;
-    FOVtext.setPosition(0, 25);
+    sf::Text FOVtext(font);
+    FOVtext.setPosition({0, 25});
     FOVtext.setFont(font);
     FOVtext.setCharacterSize(24);
 
-    time_t FPSCounter;
-    time(&FPSCounter);
-    sf::Clock clock;
+    // time_t FPSCounter;
+    // time(&FPSCounter);
     double* _output;
+    sf::Clock fpsClock;
     double deltaTime;
+    sf::Clock delayClock;
 
     // Main loop
     while (window.isOpen())
     {
-        deltaTime = clock.restart().asSeconds();
+        deltaTime = fpsClock.restart().asSeconds();
 
-        for (auto event = sf::Event{}; window.pollEvent(event);)
+        while (auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 window.close();
             }
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
         {
             rotationXOffset -= rotationSensitivity * deltaTime;
             if (rotationXOffset >= 360) rotationXOffset = 0;
             if (rotationXOffset <= -360) rotationXOffset = 0;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
         {
             rotationXOffset += rotationSensitivity * deltaTime;
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
         {
-            playerPosition[0] += cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2)) * movementSensitivity * deltaTime;
             playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
             if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
             {
-                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV/2)) * movementSensitivity * deltaTime * 2;
                 playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
             }
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
         {
-            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
+            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV/2)) * movementSensitivity * deltaTime;
             playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
             if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
             {
-                playerPosition[0] += cos(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
+                playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2)) * movementSensitivity * deltaTime * 2;
                 playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
             }
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
         {
-            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime;
-            playerPosition[1] -= sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime;
+            playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * deltaTime;
+            playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
             if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
             {
-                playerPosition[0] += cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime * 2;
-                playerPosition[1] += sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime * 2;
+                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
             }
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
         {
-            playerPosition[0] += cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime;
-            playerPosition[1] += sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime;
+            playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * deltaTime;
+            playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime;
             if (_map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
             {
-                playerPosition[0] -= cos(DegreesToRadians(rotationXOffset - 45)) * movementSensitivity * deltaTime * 2;
-                playerPosition[1] -= sin(DegreesToRadians(rotationXOffset + 90)) * movementSensitivity * deltaTime * 2;
+                playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * deltaTime * 2;
+                playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * deltaTime * 2;
             }
             if (rotationXOffset >= 360) rotationXOffset = 0;
         }
@@ -212,15 +212,16 @@ int main()
         {
             double wallSize = _output[i] * windowSize[1] - (windowSize[1] - _output[i] * windowSize[1]);
             rectangle.setSize(sf::Vector2f(1, wallSize > 0 ? wallSize : 0));
-            rectangle.setFillColor(sf::Color(pow(_output[i], 3) * 255, pow(_output[i], 3) * 255, pow(_output[i], 3) * 255));
-            rectangle.setPosition(i, windowSize[1] - _output[i] * windowSize[1]);
+            rectangle.setFillColor(sf::Color(pow(_output[i], 2) * 255, pow(_output[i], 2) * 255, pow(_output[i], 2) * 255));
+            rectangle.setPosition({i * 1.0f, windowSize[1] - _output[i] * windowSize[1] * 1.0f});
             window.draw(rectangle);
         }
 
-        if (time(0) - FPSCounter >= 1)
+        if (delayClock.getElapsedTime().asSeconds() >= 0.3)
         {
-            FPS.setString("FPS: " + std::to_string((int)(1 / clock.getElapsedTime().asSeconds())));
-            time(&FPSCounter);
+            FPS.setString("FPS: " + std::to_string((int)(1 / fpsClock.getElapsedTime().asSeconds())));
+            delayClock.restart();
+            // time(&FPSCounter);
             // FOVtext.setString("Rotation: " + std::to_string(rotationXOffset));
         }
         window.draw(FPS);

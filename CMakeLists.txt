@@ -7,11 +7,11 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 include(FetchContent)
 FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 2.6.x)
+    GIT_TAG 3.0.x)
 FetchContent_MakeAvailable(SFML)
 
 add_executable(main src/main.cpp src/Render.cpp)
-target_link_libraries(main PRIVATE sfml-graphics)
+target_link_libraries(main PRIVATE SFML::Graphics)
 target_compile_features(main PRIVATE cxx_std_17)
 
 if(WIN32)

@@ -1,11 +1,11 @@
 #include "Render.h"
 
 // Public variables init
-int FOV = 60;
+int FOV = 90;
 double rotationXOffset = -90-45;
 double rotationSensitivity = 200;
-double movementSensitivity = 10;
 int scale = 10;
+double movementSensitivity = 2 * scale;
 int renderDistance = 20 * scale;
 
 double DegreesToRadians(double _degrees)
