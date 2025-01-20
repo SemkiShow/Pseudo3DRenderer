@@ -56,7 +56,7 @@ int main()
     std::cout << "Enter the map ID" << std::endl;
     std::string mapID;
     std::getline(std::cin, mapID);
-    std::fstream mapFile("./maps/map" + mapID + ".txt");
+    std::fstream mapFile("maps/map" + mapID + ".txt");
     std::string mapFileContent;
     while (getline(mapFile, mapFileContent))
     {
@@ -113,14 +113,12 @@ int main()
     rectangle.setFillColor(sf::Color(0, 132, 208));
     // rectangle.setFillColor(Color(34, 165, 241));
 
-    sf::Font font("./JetBrainsMonoNerdFont-Medium.ttf");
+    sf::Font font("assets/JetBrainsMonoNerdFont-Medium.ttf");
     sf::Text FPS(font);
-    FPS.setFont(font);
     FPS.setString(std::to_string(123));
     FPS.setCharacterSize(24);
     sf::Text FOVtext(font);
     FOVtext.setPosition({0, 25});
-    FOVtext.setFont(font);
     FOVtext.setCharacterSize(24);
 
     // time_t FPSCounter;

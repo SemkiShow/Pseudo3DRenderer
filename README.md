@@ -26,6 +26,7 @@ A simple pseudo 3D shooter made in c++
     ```
 1. Run 
 ```
+chmod +x compile.sh
 ./compile.sh
 ```
 
