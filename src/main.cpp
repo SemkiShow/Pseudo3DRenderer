@@ -95,7 +95,7 @@ int main()
     // PrintDebugInfo();
 
     // Local variables init
-    sf::RenderWindow window(sf::VideoMode({windowSize[0], windowSize[1]}), "Pseudo3DShooter");
+    sf::RenderWindow window(sf::VideoMode({windowSize[0], windowSize[1]}), "Pseudo3DRenderer");
     // glEnable(GL_TEXTURE_2D);
     if (verticalSync)
     {

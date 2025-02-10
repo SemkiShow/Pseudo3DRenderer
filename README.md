@@ -1,5 +1,5 @@
-# Pseudo3DShooter
-A simple pseudo 3D shooter made in c++
+# Pseudo3DRenderer
+A simple pseudo 3D renderer made in c++
 
 ## How to try
 <!-- * Install Git, CMake and SFML 3.0.0+. Use your system's package manager if available. -->
