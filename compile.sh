@@ -1,15 +1,6 @@
 #!/bin/bash
-# Release
-cmake -B build -DCMAKE_BUILD_TYPE=Release &&
-cmake --build build --config Release &&
+cd build &&
+cmake .. -DCMAKE_BUILD_TYPE=Release &&
+make &&
+cd .. &&
 ./build/bin/main
-
-# Release
-# cd build
-# cmake .. && make && ./bin/main
-# cd ..
-
-# Release
-# cd build
-# g++ -c -g ../src/*.cpp && g++ *.o -g -o main -lsfml-graphics -lsfml-window -lsfml-system && ./main
-# cd ..

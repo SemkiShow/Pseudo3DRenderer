@@ -14,6 +14,7 @@ extern double rotationXOffset;
 extern double rotationSensitivity;
 extern double movementSensitivity;
 extern int scale;
+extern int renderDistance;
 
 double DegreesToRadians(double _degrees);
 int* AngleToRayDestination(double _angle, double* _playerPosition);

@@ -1,6 +1,6 @@
 #!/bin/bash
-cd build
-g++ -c -g ../src/*.cpp &&
-g++ *.o -g -o main -lsfml-graphics -lsfml-window -lsfml-system &&
+cd build &&
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. &&
+make &&
 cd .. &&
-gdb ./build/main
+gdb ./build/bin/main

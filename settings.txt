@@ -1,0 +1,5 @@
+scale=10
+fov=90
+render-distance=200
+map-id=0
+wall-color=1,1,1

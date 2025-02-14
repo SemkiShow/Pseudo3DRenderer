@@ -10,3 +10,4 @@ out
 *.zip
 main*
 release/
+imgui.ini
