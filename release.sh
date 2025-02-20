@@ -17,7 +17,7 @@ cp build_win/bin/main.exe .
 
 # Zipping the build
 rm release.zip
-printf "scale=10\nfov=90\nrender-distance=200\nmap-id=0\nwall-color=1,1,1\n" > settings.txt
+printf "scale=10\nfov=90\nrender-distance=200\nmap-id=0\nwall-color=1,1,1\nvsync=true\n" > settings.txt
 zip release.zip main main.exe libgcc_s_seh-1.dll libstdc++-6.dll maps/* assets/* LICENSE README.md settings.txt
 rm main main.exe
 

@@ -11,7 +11,7 @@
 // std::string brightness = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 // std::string brightness = "#";
 int windowSize[2] = {16*32*2, 9*32*2};
-int verticalSync = true;
+bool verticalSync = true;
 
 // Game data
 std::string mapID = "0";
@@ -28,6 +28,7 @@ bool isSettings = false;
 int lastScale = scale;
 size_t mapIDSize = 255;
 std::string lastMapID = mapID;
+bool lastVSync = verticalSync;
 
 class Settings
 {
@@ -67,6 +68,7 @@ void Settings::Save(std::string fileName)
     settingsFile << "render-distance=" << renderDistance << '\n';
     settingsFile << "map-id=" << mapID << '\n';
     settingsFile << "wall-color=" << wallColor[0] << ',' << wallColor[1] << ',' << wallColor[2] << '\n';
+    settingsFile << "vsync=" << (verticalSync ? "true" : "false") << '\n';
     settingsFile.close();
 }
 
@@ -88,6 +90,7 @@ void Settings::Load(std::string fileName)
     mapID = settingsList[3].substr(7);
     std::string* wallColorArray = Split(settingsList[4].substr(11), ',');
     for (int i = 0; i < 3; i++) wallColor[i] = stof(wallColorArray[i]);
+    verticalSync = settingsList[5].substr(6) == "true" ? true : false;
 }
 
 void ShowSettings(bool* isOpen)
@@ -102,6 +105,7 @@ void ShowSettings(bool* isOpen)
     ImGui::SliderInt("render-distance", &renderDistance, 10, 1000);
     ImGui::InputText("map-id", mapID.data(), mapIDSize);
     ImGui::ColorEdit3("wall-color", settings.wallColor);
+    ImGui::Checkbox("vsync", &verticalSync);
     ImGui::End();
 }
 
@@ -211,20 +215,15 @@ int main()
 
     // SFML init
     sf::RenderWindow window(sf::VideoMode({(unsigned int) windowSize[0], (unsigned int) windowSize[1]}), "Pseudo3DRenderer");
+    window.setFramerateLimit(0);
     
     // ImGUI init
     (void) ImGui::SFML::Init(window);
 
     if (verticalSync)
-    {
-        window.setFramerateLimit(144);
         window.setVerticalSyncEnabled(true);
-    }
     else
-    {
-        window.setFramerateLimit(0);
         window.setVerticalSyncEnabled(false);
-    }
 
     sf::RectangleShape rectangle(sf::Vector2f(0, 0));
     // rectangle.setFillColor(Color(127, 127, 255));
@@ -348,6 +347,15 @@ int main()
                 lastScale = scale;
                 lastMapID = mapID;
                 LoadMap();
+            }
+            if (lastVSync != verticalSync)
+            {
+                lastVSync = verticalSync;
+                if (verticalSync)
+                    window.setVerticalSyncEnabled(true);
+                else
+                    window.setVerticalSyncEnabled(false);
+        
             }
         }
         window.draw(FPS);
