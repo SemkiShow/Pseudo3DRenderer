@@ -90,6 +90,7 @@ void Settings::Load(std::string fileName)
     mapID = settingsList[3].substr(7);
     std::string* wallColorArray = Split(settingsList[4].substr(11), ',');
     for (int i = 0; i < 3; i++) wallColor[i] = stof(wallColorArray[i]);
+    delete[] wallColorArray;
     verticalSync = settingsList[5].substr(6) == "true" ? true : false;
 }
 
@@ -141,7 +142,6 @@ void LoadMap()
     }
     mapFile.close();
     _mapSize = _mapVector.size();
-    // free(_map);
     _map = new std::string[_mapSize];
     for (int i = 0; i < _mapSize; i++)
     {
@@ -335,6 +335,7 @@ int main()
             rectangle.setPosition({i * 1.0f, (float)(windowSize[1] - _output[i] * windowSize[1])});
             window.draw(rectangle);
         }
+        delete _output;
 
         if (delayClock.getElapsedTime().asSeconds() >= 0.3)
         {
@@ -367,4 +368,5 @@ int main()
 
     settings.Save("settings.txt");
     ImGui::SFML::Shutdown();
+    delete[] _map;
 }
