@@ -15,7 +15,7 @@ double DegreesToRadians(double _degrees)
 
 int* AngleToRayDestination(double _angle, double* _playerPosition)
 {
-    int* _rayDestination = new int[2];
+    static int _rayDestination[2];
     _rayDestination[0] = (int)_playerPosition[0] + (int)(cos(DegreesToRadians(_angle)) * renderDistance);
     _rayDestination[1] = (int)_playerPosition[1] + (int)(sin(DegreesToRadians(_angle)) * renderDistance);
     return _rayDestination;
@@ -23,11 +23,11 @@ int* AngleToRayDestination(double _angle, double* _playerPosition)
 
 int* RayCollisionDetection(int* _rayDestination, std::string* _map, int _mapSize, double* _playerPosition)
 {
-    double* _rayStep = new double[2];
+    double _rayStep[2];
     _rayStep[0] = (_rayDestination[0] - (int)_playerPosition[0]) * 1.0 / renderDistance;
     _rayStep[1] = (_rayDestination[1] - (int)_playerPosition[1]) * 1.0 / renderDistance;
     
-    int* _rayPosition = new int[3];
+    static int _rayPosition[3];
     _rayPosition[0] = 0;
     _rayPosition[1] = 0;
     _rayPosition[3] = 0; // Ray distance
