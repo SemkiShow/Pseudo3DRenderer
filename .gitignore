@@ -8,6 +8,5 @@ out
 .vs
 .vscode
 *.zip
-main*
 release/
 imgui.ini

@@ -1,5 +1,5 @@
 # Pseudo3DRenderer
-A simple pseudo 3D renderer made in c++
+A simple pseudo 3D renderer made in C++
 
 ## How to try
 <!-- * Install Git, CMake and SFML 3.0.0+. Use your system's package manager if available. -->
