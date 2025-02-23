@@ -3,7 +3,7 @@
 // Public variables init
 int FOV = 90;
 double rotationXOffset = -90-45;
-double rotationSensitivity = 200;
+int rotationSensitivity = 200;
 int scale = 10;
 double movementSensitivity = 2 * scale;
 int renderDistance = 20 * scale;

@@ -11,7 +11,7 @@
 
 extern int FOV;
 extern double rotationXOffset;
-extern double rotationSensitivity;
+extern int rotationSensitivity;
 extern double movementSensitivity;
 extern int scale;
 extern int renderDistance;

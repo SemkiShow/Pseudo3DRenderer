@@ -69,6 +69,7 @@ void Settings::Save(std::string fileName)
     settingsFile << "map-id=" << mapID << '\n';
     settingsFile << "wall-color=" << wallColor[0] << ',' << wallColor[1] << ',' << wallColor[2] << '\n';
     settingsFile << "vsync=" << (verticalSync ? "true" : "false") << '\n';
+    settingsFile << "rotation-sensitivity=" << rotationSensitivity << '\n';
     settingsFile.close();
 }
 
@@ -92,6 +93,7 @@ void Settings::Load(std::string fileName)
     for (int i = 0; i < 3; i++) wallColor[i] = stof(wallColorArray[i]);
     delete[] wallColorArray;
     verticalSync = settingsList[5].substr(6) == "true" ? true : false;
+    rotationSensitivity = stoi(settingsList[6].substr(21));
 }
 
 void ShowSettings(bool* isOpen)
@@ -107,6 +109,7 @@ void ShowSettings(bool* isOpen)
     ImGui::InputText("map-id", mapID.data(), mapIDSize);
     ImGui::ColorEdit3("wall-color", settings.wallColor);
     ImGui::Checkbox("vsync", &verticalSync);
+    ImGui::SliderInt("rotation-sensitivity", &rotationSensitivity, 10, 500);
     ImGui::End();
 }
 
