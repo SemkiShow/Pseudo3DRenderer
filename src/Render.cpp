@@ -87,7 +87,15 @@ double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, double* _
     // std::cout << "Ray angle, Ray distance, Column height, Symbol index, Symbol" << std::endl;
     for (int i = 0; i < _windowSize[0]; i++)
     {
-        _rayPosition = RayCollisionDetection(AngleToRayDestination(_rayAngleStep * i + rotationXOffset, _playerPosition), _map, _mapSize, _playerPosition);
+        int* forward = AngleToRayDestination(rotationXOffset, _playerPosition);
+        double right[2] = {forward[1], -forward[0]};
+        double halfWidth = tan(DegreesToRadians(FOV / 2));
+        int rayDestination[2] = {0, 0};
+        double offset = ((i * 2.0 / (_windowSize[0] - 1.0)) - 1.0) * halfWidth;
+        rayDestination[0] = forward[0] + offset * right[0];
+        rayDestination[1] = forward[1] + offset * right[1];
+
+        _rayPosition = RayCollisionDetection(rayDestination, _map, _mapSize, _playerPosition);
         // std::cout << (int)(_rayAngleStep * i) << " deg, " << _rayPosition[3] << ", " << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]) << ", " << (int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1)) << ", " << brightness[(int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1))] << "; ";
         _output[i] = 1 - _rayPosition[3] * 1.0 / renderDistance;
         // std::cout << std::endl;

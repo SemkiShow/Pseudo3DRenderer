@@ -265,15 +265,14 @@ int main()
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
         {
-            rotationXOffset -= rotationSensitivity * deltaTime.asSeconds();
-            if (rotationXOffset >= 360) rotationXOffset = 0;
-            if (rotationXOffset <= -360) rotationXOffset = 0;
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-        {
             rotationXOffset += rotationSensitivity * deltaTime.asSeconds();
             if (rotationXOffset >= 360) rotationXOffset = 0;
+        }
+        
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+        {
+            rotationXOffset -= rotationSensitivity * deltaTime.asSeconds();
+            if (rotationXOffset <= -360) rotationXOffset = 0;
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
