@@ -3,7 +3,7 @@
 set -e
 
 # Compiling for Linux
-if [ ! -d build]; then
+if [ ! -d build ]; then
     mkdir build
 fi
 cd build
@@ -13,7 +13,7 @@ cd ..
 cp build/bin/main main
 
 # Compiling for Windows
-if [ ! -d build_win]; then
+if [ ! -d build_win ]; then
     mkdir build_win
 fi
 cd build_win
@@ -25,7 +25,7 @@ cp build_win/bin/main.exe .
 # Zipping the build
 rm release.zip
 ./reset_save_files.sh
-zip release.zip main main.exe libgcc_s_seh-1.dll libstdc++-6.dll maps/* assets/* LICENSE README.md settings.txt
+zip release.zip main main.exe maps/* assets/* LICENSE README.md settings.txt
 rm main main.exe
 
 # Creating a GitHub release
