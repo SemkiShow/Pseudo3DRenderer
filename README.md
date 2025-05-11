@@ -29,7 +29,3 @@ A simple pseudo 3D renderer made in C++
 chmod +x compile.sh
 ./compile.sh
 ```
-
-## License
-
-The source code is licensed under MIT.
