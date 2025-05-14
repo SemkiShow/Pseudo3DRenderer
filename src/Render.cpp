@@ -1,106 +1,102 @@
-#include "Render.h"
+#include "Render.hpp"
 
-// Public variables init
 int FOV = 90;
-double rotationXOffset = -90-45;
+double rotationXOffset = -90-FOV/2;
 int rotationSensitivity = 200;
 int scale = 10;
-double movementSensitivity = 2 * scale;
+int movementSensitivity = 2;
 int renderDistance = 20 * scale;
+int windowSize[2] = {16*50*2, 9*50*2};
+double playerPosition[2] = {-1, -2};
+std::vector<std::string> map;
 
-double DegreesToRadians(double _degrees)
+double DegreesToRadians(double degrees)
 {
-    return _degrees * (3.141592654 / 180);
+    return degrees * (3.1415926536 / 180);
 }
 
-int* AngleToRayDestination(double _angle, double* _playerPosition)
+int* AngleToRayDestination(double angle)
 {
-    static int _rayDestination[2];
-    _rayDestination[0] = (int)_playerPosition[0] + (int)(cos(DegreesToRadians(_angle)) * renderDistance);
-    _rayDestination[1] = (int)_playerPosition[1] + (int)(sin(DegreesToRadians(_angle)) * renderDistance);
-    return _rayDestination;
+    static int rayDestination[2];
+    rayDestination[0] = (int)playerPosition[0] + (int)(cos(DegreesToRadians(angle)) * renderDistance);
+    rayDestination[1] = (int)playerPosition[1] + (int)(sin(DegreesToRadians(angle)) * renderDistance);
+    return rayDestination;
 }
 
-int* RayCollisionDetection(int* _rayDestination, std::string* _map, int _mapSize, double* _playerPosition)
+int* RayCollisionDetection(int* rayDestination)
 {
     double _rayStep[2];
-    _rayStep[0] = (_rayDestination[0] - (int)_playerPosition[0]) * 1.0 / renderDistance;
-    _rayStep[1] = (_rayDestination[1] - (int)_playerPosition[1]) * 1.0 / renderDistance;
+    _rayStep[0] = (rayDestination[0] - (int)playerPosition[0]) * 1.0 / renderDistance;
+    _rayStep[1] = (rayDestination[1] - (int)playerPosition[1]) * 1.0 / renderDistance;
     
-    static int _rayPosition[3];
-    _rayPosition[0] = 0;
-    _rayPosition[1] = 0;
-    _rayPosition[3] = 0; // Ray distance
+    static int rayPosition[3];
+    rayPosition[0] = 0;
+    rayPosition[1] = 0;
+    rayPosition[3] = 0; // Ray distance
     for (int i = 0; i < renderDistance; i++)
     {
-        _rayPosition[0] = (int)_playerPosition[0] + (int)(_rayStep[0] * i);
-        _rayPosition[1] = (int)_playerPosition[1] + (int)(_rayStep[1] * i);
-        // std::cout << _map[_rayPosition[1]][_rayPosition[0]] << "; ";
-        if (_rayPosition[0] < 0 | _rayPosition[0] >= _map[0].length() | _rayPosition[1] < 0 | _rayPosition[1] >= _mapSize)
+        rayPosition[0] = (int)playerPosition[0] + (int)(_rayStep[0] * i);
+        rayPosition[1] = (int)playerPosition[1] + (int)(_rayStep[1] * i);
+        // std::cout << map[rayPosition[1]][rayPosition[0]] << "; ";
+        if (rayPosition[0] < 0 | rayPosition[0] >= map[0].size() | rayPosition[1] < 0 | rayPosition[1] >= map.size())
         {
-            _rayPosition[3] = renderDistance;
+            rayPosition[3] = renderDistance;
             break;
         }
-        if (_map[_rayPosition[1]][_rayPosition[0]] == '#')
+        if (map[rayPosition[1]][rayPosition[0]] == '#')
         {
             break;
         }
-        _rayPosition[3]++;
+        rayPosition[3]++;
     }
-    return _rayPosition;
+    return rayPosition;
 }
 
-double* GetPlayerPosition(std::string* _map, int _mapSize)
+void GetPlayerPosition()
 {
-    static double _playerPosition[2] = {-1, -2};
-    std::cout << "The map size is " << _mapSize << ", " << _map[0].length() << std::endl;
+    std::cout << "The map size is " << map.size() << ", " << map[0].size() << std::endl;
     
-    for (int y = 0; y < _mapSize; y++)
+    bool foundPlayer = false;
+    for (int y = 0; y < map.size(); y++)
     {
-        for (int x = 0; x < _map[y].length(); x++)
+        for (int x = 0; x < map[y].size(); x++)
         {
-            // std::cout << _map[y][x];
-            if (_map[y][x] == 'P')
+            if (map[y][x] == 'P')
             {
-                _playerPosition[0] = x;
-                _playerPosition[1] = y;
-                // break;
+                playerPosition[0] = x;
+                playerPosition[1] = y;
+                foundPlayer = true;
+                break;
             }
-            
         }
-        // std::cout << std::endl;
+        if (foundPlayer) break;
     }
-    return _playerPosition;
 }
 
-double* RenderFrame(std::string* _map, int _mapSize, int* _windowSize, double* _playerPosition)
+double* RenderFrame()
 {
-    double* _output = new double[_windowSize[0]];
-    for (int i = 0; i < _windowSize[0]; i++)
+    double* output = new double[windowSize[0]];
+    for (int i = 0; i < windowSize[0]; i++)
     {
-        _output[i] = 0.5;
+        output[i] = 0.5;
     }
-    double _rayAngleStep = FOV * 1.0 / _windowSize[0];
-    int* _rayPosition;
-    // std::cout << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]);
+    double rayAngleStep = FOV * 1.0 / windowSize[0];
+    int* rayPosition;
     
-    // std::cout << "Ray angle, Ray distance, Column height, Symbol index, Symbol" << std::endl;
-    for (int i = 0; i < _windowSize[0]; i++)
+    for (int i = 0; i < windowSize[0]; i++)
     {
-        int* forward = AngleToRayDestination(rotationXOffset, _playerPosition);
-        double right[2] = {forward[1], -forward[0]};
-        double halfWidth = tan(DegreesToRadians(FOV / 2));
-        int rayDestination[2] = {0, 0};
-        double offset = ((i * 2.0 / (_windowSize[0] - 1.0)) - 1.0) * halfWidth;
-        rayDestination[0] = forward[0] + offset * right[0];
-        rayDestination[1] = forward[1] + offset * right[1];
+        // int* forward = AngleToRayDestination(rotationXOffset);
+        // double right[2] = {forward[1] * 1.0, -forward[0] * 1.0};
+        // double halfWidth = tan(DegreesToRadians(FOV / 2));
+        // int rayDestination[2] = {0, 0};
+        // double offset = ((i * 2.0 / (windowSize[0] - 1.0)) - 1.0) * halfWidth;
+        // rayDestination[0] = forward[0] + offset * right[0];
+        // rayDestination[1] = forward[1] + offset * right[1];
 
-        _rayPosition = RayCollisionDetection(rayDestination, _map, _mapSize, _playerPosition);
-        // std::cout << (int)(_rayAngleStep * i) << " deg, " << _rayPosition[3] << ", " << (int)(_rayPosition[3] * 1.0 / renderDistance * _windowSize[1]) << ", " << (int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1)) << ", " << brightness[(int)((1.0 - _rayPosition[3] * 1.0 / renderDistance) * (brightness.length() - 1))] << "; ";
-        _output[i] = 1 - _rayPosition[3] * 1.0 / renderDistance;
-        // std::cout << std::endl;
+        rayPosition = RayCollisionDetection(/* rayDestination */AngleToRayDestination(rayAngleStep * i + rotationXOffset));
+        output[i] = 1 - rayPosition[3] * 1.0 / renderDistance;
+        // output[i] *= 0.95;
     }
-    // std::cout << std::endl;
 
-    return _output;
+    return output;
 }
