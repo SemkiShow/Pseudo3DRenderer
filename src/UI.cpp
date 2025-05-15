@@ -17,7 +17,7 @@ void ShowSettings(bool* isOpen)
     }
     ImGui::SliderInt("scale", &scale, 1, 100);
     ImGui::SliderInt("fov", &FOV, 10, 180);
-    ImGui::SliderInt("render-distance", &renderDistance, 10, 1000);
+    ImGui::SliderInt("render-distance", &renderDistance, 10, 50);
     ImGui::InputText("map-id", &mapID, ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::ColorEdit3("wall-color", settings.wallColor);
     ImGui::Checkbox("vsync", &settings.verticalSync);

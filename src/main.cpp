@@ -44,15 +44,14 @@ int PrintDebugInfo()
 int main()
 {
     settings.Load("settings.txt");
-    // std::cout << "Enter the map ID" << std::endl;
-    // std::getline(std::cin, mapID);
+
     if (!std::filesystem::exists("maps/" + mapID + ".txt")) mapID = "map0";
     LoadMap();
 
     // PrintDebugInfo();
 
     // SFML init
-    sf::RenderWindow window(sf::VideoMode({(unsigned int) windowSize[0], (unsigned int) windowSize[1]}), "Pseudo3DRenderer");
+    sf::RenderWindow window(sf::VideoMode({(unsigned int)windowSize[0], (unsigned int)windowSize[1]}), "Pseudo3DRenderer");
     window.setFramerateLimit(0);
     
     // ImGUI init
