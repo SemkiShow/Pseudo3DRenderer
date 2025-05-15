@@ -46,6 +46,7 @@ int main()
     settings.Load("settings.txt");
     // std::cout << "Enter the map ID" << std::endl;
     // std::getline(std::cin, mapID);
+    if (!std::filesystem::exists("maps/" + mapID + ".txt")) mapID = "map0";
     LoadMap();
 
     // PrintDebugInfo();
