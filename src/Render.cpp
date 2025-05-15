@@ -10,9 +10,11 @@ int windowSize[2] = {16*50*2, 9*50*2};
 double playerPosition[2] = {-1, -2};
 std::vector<std::string> map;
 
+#define PI 3.1415926536
+
 double DegreesToRadians(double degrees)
 {
-    return degrees * (3.1415926536 / 180);
+    return degrees * PI / 180;
 }
 
 int* AngleToRayDestination(double angle)
@@ -81,15 +83,10 @@ double* RenderFrame()
     
     for (int i = 0; i < windowSize[0]; i++)
     {
-        // int* forward = AngleToRayDestination(rotationXOffset);
-        // double right[2] = {forward[1] * 1.0, -forward[0] * 1.0};
-        // double halfWidth = sin(DegreesToRadians(FOV / 2));
-        // int rayDestination[2] = {0, 0};
-        // double offset = ((i * 2.0 / (windowSize[0] - 1.0)) - 1.0) * halfWidth;
-        // rayDestination[0] = forward[0] + offset * right[0];
-        // rayDestination[1] = forward[1] + offset * right[1];
+        double angle = DegreesToRadians(rotationXOffset) - (DegreesToRadians(FOV) / 2) + (i * DegreesToRadians(FOV) / windowSize[0]);
 
-        rayPosition = RayCollisionDetection(/* rayDestination */AngleToRayDestination(rayAngleStep * i + rotationXOffset));
+        rayPosition = RayCollisionDetection(AngleToRayDestination(angle * 180 / PI));
+        rayPosition[3] *= cos(angle - DegreesToRadians(rotationXOffset));
         output[i] = 1 - rayPosition[3] * 1.0 / renderDistance / scale;
     }
 
