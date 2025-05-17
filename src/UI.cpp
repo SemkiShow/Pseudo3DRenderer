@@ -23,6 +23,7 @@ void ShowSettings(bool* isOpen)
     ImGui::Checkbox("vsync", &settings.verticalSync);
     ImGui::SliderInt("rotation-sensitivity", &rotationSensitivity, 10, 500);
     ImGui::SliderInt("movement-sensitivity", &movementSensitivity, 1, 50);
+    ImGui::Checkbox("show-fps", &settings.showFPS);
     ImGui::End();
 }
 

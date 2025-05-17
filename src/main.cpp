@@ -136,7 +136,7 @@ int main()
                     window.setVerticalSyncEnabled(false);
             }
         }
-        window.draw(FPS);
+        if (settings.showFPS) window.draw(FPS);
         window.draw(FOVtext);
 
         ImGui::SFML::Render(window);

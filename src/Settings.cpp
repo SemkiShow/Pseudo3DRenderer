@@ -35,6 +35,7 @@ void Settings::Save(std::string fileName)
     settingsFile << "vsync=" << (verticalSync ? "true" : "false") << '\n';
     settingsFile << "rotation-sensitivity=" << rotationSensitivity << '\n';
     settingsFile << "movement-sensitivity=" << movementSensitivity << '\n';
+    settingsFile << "show-fps=" << (showFPS ? "true" : "false") << '\n';
     settingsFile.close();
 }
 
@@ -56,7 +57,8 @@ void Settings::Load(std::string fileName)
     mapID = settingsList[3].substr(7);
     std::vector<std::string> wallColorArray = Split(settingsList[4].substr(11), ',');
     for (int i = 0; i < 3; i++) wallColor[i] = stof(wallColorArray[i]);
-    verticalSync = settingsList[5].substr(6) == "true" ? true : false;
+    verticalSync = settingsList[5].substr(6) == "true";
     rotationSensitivity = stoi(settingsList[6].substr(21));
     movementSensitivity = stoi(settingsList[7].substr(21));
+    showFPS = settingsList[8].substr(9) == "true";
 }
