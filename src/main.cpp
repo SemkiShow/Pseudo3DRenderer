@@ -7,40 +7,6 @@
 #include "Settings.hpp"
 #include "Game.hpp"
 
-int PrintDebugInfo()
-{
-    // Debug info
-    std::cout << "<Debug info>" << std::endl;
-
-    std::cout << "Window size is " << windowSize[0] << ", " << windowSize[1] << std::endl;
-
-    // std::cout << map[0].size() << std::endl;
-    std::cout << "Player position: " << playerPosition[0] << ", " << playerPosition[1] << std::endl;
-    
-    int angle;
-    bool _askForAngle = false;
-    if (_askForAngle)
-    {
-        std::cout << "Enter angle: ";
-        std::cin >> angle;
-    }
-    else
-    {
-        angle = 42.0; // Veritasium angle
-    }
-    int* rayDestination = AngleToRayDestination(angle);
-    std::cout << "Ray destination at angle " << angle << " is " << rayDestination[0] << ", " << rayDestination[1] << std::endl;
-
-    int* rayPosition = RayCollisionDetection(rayDestination);
-    std::cout << "Ray position is " << rayPosition[0] << ", " << rayPosition[1] << ". The ray has travelled " << rayPosition[3] << " m" << std::endl;
-
-    double* output = RenderFrame();
-
-    std::cout << "</Debug info>" << std::endl;
-
-    return 0;
-}
-
 int main()
 {
     settings.Load("settings.txt");
@@ -77,7 +43,6 @@ int main()
     FOVtext.setPosition({0, 25});
     FOVtext.setCharacterSize(24);
 
-    double* output;
     sf::Clock deltaTimeClock;
     sf::Time deltaTime;
     sf::Clock delayClock;
@@ -105,7 +70,11 @@ int main()
 
         window.clear();
 
-        output = RenderFrame();
+        std::vector<std::thread> threads;
+        for (int i = 0; i < threadsNumber; i++)
+            threads.push_back(std::thread(RenderFrame, i));
+        for (int i = 0; i < threadsNumber; i++)
+            threads[i].join();
         for (int i = 0; i < windowSize[0]; i++)
         {
             double wallSize = output[i] * windowSize[1] - (windowSize[1] - output[i] * windowSize[1]);
@@ -114,7 +83,6 @@ int main()
             rectangle.setPosition({i * 1.f, (float)(windowSize[1] - output[i] * windowSize[1])});
             window.draw(rectangle);
         }
-        delete output;
 
         if (delayClock.getElapsedTime().asSeconds() >= 0.3)
         {

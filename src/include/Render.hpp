@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <thread>
 
 extern int FOV;
 extern double rotationXOffset;
@@ -12,9 +13,10 @@ extern int renderDistance;
 extern int windowSize[2];
 extern double playerPosition[2];
 extern std::vector<std::string> map;
+extern double* output;
+extern int threadsNumber;
 
 double DegreesToRadians(double degrees);
-int* AngleToRayDestination(double angle);
-int* RayCollisionDetection(int* rayDestination);
+int Raycast(double angle);
 void GetPlayerPosition();
-double* RenderFrame();
+void RenderFrame(int threadID);
