@@ -60,15 +60,15 @@ void ProcessPlayerInput(sf::Time deltaTime)
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
     {
-        playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * scale * deltaTime.asSeconds();
-        playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * scale * deltaTime.asSeconds();
+        playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV)) * movementSensitivity * scale * deltaTime.asSeconds();
+        playerPosition[1] += sin(DegreesToRadians(rotationXOffset - FOV)) * movementSensitivity * scale * deltaTime.asSeconds();
         direction = "left";
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
     {
-        playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV/2 - 90)) * movementSensitivity * scale * deltaTime.asSeconds();
-        playerPosition[1] -= sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * scale * deltaTime.asSeconds();
+        playerPosition[0] -= cos(DegreesToRadians(rotationXOffset + FOV)) * movementSensitivity * scale * deltaTime.asSeconds();
+        playerPosition[1] -= sin(DegreesToRadians(rotationXOffset - FOV)) * movementSensitivity * scale * deltaTime.asSeconds();
         direction = "right";
     }
 
@@ -80,8 +80,9 @@ void ProcessPlayerInput(sf::Time deltaTime)
     }
     if (map[(int)playerPosition[1]][(int)playerPosition[0]] == '#')
     {
-        playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2 - (direction == "left" || direction == "right" ? 90 : 0))) * 
+        playerPosition[0] += cos(DegreesToRadians(rotationXOffset + FOV/2 + (direction == "left" || direction == "right" ? FOV / 2 : 0))) * 
             movementSensitivity * scale * deltaTime.asSeconds() * 2 * (direction == "forward" || direction == "right" ? -1 : 1);
-        playerPosition[1] += sin(DegreesToRadians(rotationXOffset)) * movementSensitivity * scale * deltaTime.asSeconds() * 2 * (direction == "forward" ? -1 : 1);
+        playerPosition[1] += sin(DegreesToRadians(rotationXOffset - (direction == "left" || direction == "right" ? FOV : 0))) * 
+            movementSensitivity * scale * deltaTime.asSeconds() * 2 * (direction == "forward" || direction == "right" ? -1 : 1);
     }
 }
