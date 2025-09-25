@@ -1,47 +1,86 @@
-#include "UI.hpp"
-#include "Settings.hpp"
-#include "Render.hpp"
 #include "Game.hpp"
+#include "Settings.hpp"
+#include "UI.hpp"
+#include <raygui.h>
 
-std::string mapID = "0";
+#define UI_SPACING 30
+#define ELEMENT_SIZE 30
+#define SLIDER_WIDTH (float)GetScreenWidth() - 270
+#define COLOR_PICKER_SIZE 100
+#define ELEMENT_SPACING 10
 
 bool isSettings = false;
-int menuOffset = 20;
 
-void ShowSettings(bool* isOpen)
+float nextElementPositionY = UI_SPACING * 2;
+
+void DrawCheckBox(const char* text, bool* value)
 {
-    if (!ImGui::Begin("Settings", isOpen))
-    {
-        ImGui::End();
-        return;
-    }
-    ImGui::SliderInt("scale", &scale, 1, 100);
-    ImGui::SliderInt("fov", &FOV, 10, 180);
-    ImGui::SliderInt("render-distance", &renderDistance, 10, 50);
-    ImGui::InputText("map-id", &mapID, ImGuiInputTextFlags_EnterReturnsTrue);
-    ImGui::ColorEdit3("wall-color", settings.wallColor);
-    ImGui::Checkbox("vsync", &settings.verticalSync);
-    ImGui::SliderInt("rotation-sensitivity", &rotationSensitivity, 10, 500);
-    ImGui::SliderInt("movement-sensitivity", &movementSensitivity, 1, 50);
-    ImGui::Checkbox("show-fps", &settings.showFPS);
-    ImGui::End();
+    GuiCheckBox(Rectangle{UI_SPACING * 2, nextElementPositionY, ELEMENT_SIZE, ELEMENT_SIZE}, text,
+                value);
+    nextElementPositionY += ELEMENT_SIZE + ELEMENT_SPACING;
 }
 
-void ShowMenuBar()
+void DrawSlider(const char* leftText, const char* rightText, float* value, float minValue,
+                float maxValue)
 {
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("Menu"))
-        {
-            if (ImGui::MenuItem("Reload")) LoadMap();
-            if (ImGui::MenuItem("Settings"))
-            {
-                isSettings = true;
-                ShowSettings(&isSettings);
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-    return;
+    GuiSlider(Rectangle{UI_SPACING * 2, nextElementPositionY, SLIDER_WIDTH, ELEMENT_SIZE}, leftText,
+              rightText, value, minValue, maxValue);
+    DrawText(std::to_string(*value).c_str(), (SLIDER_WIDTH + UI_SPACING * 2) / 2.f,
+             nextElementPositionY + 5, 24, WHITE);
+    nextElementPositionY += ELEMENT_SIZE + ELEMENT_SPACING;
+}
+
+void DrawSliderInt(const char* leftText, const char* rightText, int* value, float minValue,
+                   float maxValue)
+{
+    float valueFloat = *value;
+    GuiSlider(Rectangle{UI_SPACING * 2, nextElementPositionY, SLIDER_WIDTH, ELEMENT_SIZE}, leftText,
+              rightText, &valueFloat, minValue, maxValue);
+    *value = valueFloat;
+    DrawText(std::to_string(*value).c_str(), (SLIDER_WIDTH + UI_SPACING * 2) / 2.f,
+             nextElementPositionY + 5, 24, WHITE);
+    nextElementPositionY += ELEMENT_SIZE + ELEMENT_SPACING;
+}
+
+void DrawColorPicker(const char* text, Color* color)
+{
+    GuiColorPanel(
+        Rectangle{UI_SPACING * 2, nextElementPositionY, COLOR_PICKER_SIZE, COLOR_PICKER_SIZE}, text,
+        color);
+    nextElementPositionY += COLOR_PICKER_SIZE + ELEMENT_SPACING;
+}
+
+void DrawTextBox(const char* label, std::string& text)
+{
+    GuiTextBox(Rectangle{UI_SPACING * 2, nextElementPositionY, SLIDER_WIDTH, ELEMENT_SIZE},
+               text.data(), text.capacity(), true);
+    DrawText(label, SLIDER_WIDTH + UI_SPACING * 2 + 5, nextElementPositionY + 5, 24, WHITE);
+    nextElementPositionY += ELEMENT_SIZE + ELEMENT_SPACING;
+}
+
+void DrawSettings()
+{
+    if (!isSettings) return;
+    DrawRectangleRounded(Rectangle{UI_SPACING, UI_SPACING, (float)GetScreenWidth() - UI_SPACING * 2,
+                                   (float)GetScreenHeight() - UI_SPACING * 2},
+                         0.1f, 1, Color{128, 128, 128, 128});
+    nextElementPositionY = UI_SPACING * 2;
+    DrawSliderInt("", "scale", &scale, 1, 100);
+    DrawSliderInt("", "fov", &fov, 10, 180);
+    DrawSliderInt("", "render-distance", &renderDistance, 10, 50);
+    DrawTextBox("map-id", mapID);
+    DrawColorPicker("wall-color", &wallColor);
+    DrawCheckBox("vsync", &vsync);
+    DrawSliderInt("", "rotation-sensitivity", &rotationSensitivity, 10, 500);
+    DrawSliderInt("", "movement-sensitivity", &movementSensitivity, 1, 50);
+    DrawCheckBox("show-fps", &showFPS);
+}
+
+void DrawUI()
+{
+    if (GuiButton(Rectangle{(float)GetScreenWidth() - 30, 0, 30, 30}, "#142#"))
+        isSettings = !isSettings;
+    if (GuiButton(Rectangle{(float)GetScreenWidth() - 60, 0, 30, 30}, "#77#")) LoadMap();
+
+    DrawSettings();
 }

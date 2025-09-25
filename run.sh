@@ -1,33 +1,42 @@
 #!/bin/bash
 
 set -e
+executable_name=Pseudo3DRenderer
 
 # Release build
 if [ "$1" == "" ]; then
     clear
-    ./reset_save_files.sh --soft
-    if [ ! -d build ]; then
-        mkdir build
-    fi
-    cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Release
-    make
-    cd ..
-    ./build/bin/main
+    cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    cmake --build build -j32
+    ./build/bin/$executable_name
 fi
 
 # Debug build
 if [ "$1" == "-d" ] || [ "$1" == "--debug" ]; then
     clear
-    ./reset_save_files.sh --soft
-    if [ ! -d debug ]; then
-        mkdir debug
+    cmake -B build_debug -DCMAKE_BUILD_TYPE=Debug
+    cmake --build build_debug -j32
+    gdb -ex run --args ./build_debug/bin/$executable_name
+fi
+
+# Windows build
+if [ "$1" == "-w" ] || [ "$1" == "--windows" ]; then
+    clear
+    cmake -B build_windows -DCMAKE_TOOLCHAIN_FILE="$(pwd)/mingw-w64-x86_64.cmake" -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    cmake --build build_windows -j32
+    wine ./build_windows/bin/$executable_name.exe
+fi
+
+# Web build
+if [ "$1" == "--web" ]; then
+    clear
+    if [ "$2" == "-m" ] || [ "$2" == "--minimal" ]; then
+        emcmake cmake -B build_web -DPLATFORM=Web -DSHELL=Minimal
+    else
+        emcmake cmake -B build_web -DPLATFORM=Web -DSHELL=Full
     fi
-    cd debug
-    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
-    make
-    cd ..
-    gdb -ex run ./debug/bin/main
+    cmake --build build_web -j ${nproc}
+    emrun ./build_web/bin/
 fi
 
 # Help info
@@ -37,5 +46,8 @@ if [ "$1" == "--help" ]; then
     echo ""
     echo "With no OPTION, compile and run the release build"
     echo ""
-    echo "-d, --debug    Compile the debug build and run it with gdb"
+    echo "-d, --debug      Compile the debug build and run it with gdb"
+    echo "-w, --windows    Compile the Windows build and run it with Wine"
+    echo "--web      Compile the WebAssembly build"
+    echo "-m, --minimal  Compile a WebAssembly build with the minimal shell"
 fi
