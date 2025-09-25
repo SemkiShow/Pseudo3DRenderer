@@ -90,6 +90,9 @@ void DrawFrame()
 
     ClearBackground(BLACK);
 
+    windowSize.x = GetRenderWidth();
+    windowSize.y = GetRenderHeight();
+
     ProcessPlayerInput();
 
     auto frame = GetFrame();
