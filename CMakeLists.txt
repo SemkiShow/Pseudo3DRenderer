@@ -9,34 +9,17 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Dependencies
-set(RAYLIB_VERSION 5.5)
-set(RAYGUI_VERSION 4.0)
-
 # Turn off all warning-related errors when compiling third-party code
 add_compile_options(-Wno-error)
-message(STATUS "Downloading required libraries")
 
-FetchContent_Declare(
-    raylib
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
-    URL https://github.com/raysan5/raylib/archive/${RAYLIB_VERSION}.zip
-    FIND_PACKAGE_ARGS
-)
-FetchContent_MakeAvailable(raylib)
+# Raylib
+add_subdirectory(${CMAKE_SOURCE_DIR}/thirdparty/raylib ${CMAKE_BINARY_DIR}/_deps/raylib-build)
 
 # Raygui
-FetchContent_Declare(
-    raygui
-    URL https://github.com/raysan5/raygui/archive/${RAYGUI_VERSION}.zip
-)
-FetchContent_MakeAvailable(raygui)
-add_subdirectory(${raygui_SOURCE_DIR}/projects/CMake)
+add_subdirectory(${CMAKE_SOURCE_DIR}/thirdparty/raygui/projects/CMake ${CMAKE_BINARY_DIR}/_deps/raygui-build)
 
 add_compile_options(-Wall -Wextra)
 file(GLOB SOURCES src/*.cpp)
